@@ -4,39 +4,26 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.chenile</groupId>
-    <artifactId>chenile-automation-parent</artifactId>
+    <groupId>org.chenile.bdd</groupId>
+    <artifactId>chenile-bdd-parent</artifactId>
     <version>${revision}</version>
 
     <modules>
         <module>it-cucumber-utils</module>
         <module>it-cucumber-sec-utils</module>
-        <module>it</module>
     </modules>
 
     <packaging>pom</packaging>
 
     <parent>
         <groupId>org.chenile</groupId>
-        <version>1.3.8</version>
+        <version>1.4.2</version>
         <artifactId>chenile-parent</artifactId>
     </parent>
 
     <properties>
-        <java.version>17</java.version>
-        <revision>0.1</revision>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cucumber.version>4.3.1</cucumber.version>
-        <jacoco.version>0.8.11</jacoco.version>
-        <chenile.version>1.3.8</chenile.version>
-        <springdoc.version>2.4.0</springdoc.version>
-        <hazelcast.version>3.12.3</hazelcast.version>
-        <mybatis.spring.version>3.0.3</mybatis.spring.version>
-        <spring-boot.version>3.2.4</spring-boot.version>
-        <mqtt.paho.version>1.2.5</mqtt.paho.version>
-        <hive.version>1.19.7</hive.version>
-        <wire.mock.version>3.5.2</wire.mock.version>
-        <maven.gpg.version>3.2.4</maven.gpg.version>
+        <revision>0.1.1</revision>
+        <chenile.bdd.version>${revision}</chenile.bdd.version>
     </properties>
     <licenses>
         <license>
@@ -46,149 +33,17 @@
     </licenses>
     <dependencyManagement>
         <dependencies>
-
             <dependency>
-                <groupId>org.chenile</groupId>
-                <artifactId>chenile-core</artifactId>
-                <version>${chenile.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.chenile</groupId>
-                <artifactId>owiz</artifactId>
-                <version>${chenile.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.chenile</groupId>
-                <artifactId>chenile-base</artifactId>
-                <version>${chenile.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.chenile</groupId>
-                <artifactId>chenile-core</artifactId>
-                <version>${chenile.version}</version>
-            </dependency>
-
-
-            <dependency>
-                <groupId>org.chenile</groupId>
+                <groupId>org.chenile.bdd</groupId>
                 <artifactId>it-cucumber-utils</artifactId>
-                <version>${revision}</version>
+                <version>${chenile.bdd.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.chenile</groupId>
+                <groupId>org.chenile.bdd</groupId>
                 <artifactId>it-cucumber-sec-utils</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-
-
-            <!-- Third Party Libraries -->
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.6</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.wiremock</groupId>
-                <artifactId>wiremock-standalone</artifactId>
-                <version>${wire.mock.version}</version>
-                <scope>test</scope>
+                <version>${chenile.bdd.version}</version>
             </dependency>
         </dependencies>
-
     </dependencyManagement>
-
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.2.5</version>
-                <configuration>
-                    <pomElements>
-                        <name>keep</name>
-                    </pomElements>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.2</version>
-                <configuration>
-                    <localCheckout>true</localCheckout> <!-- must be true -->
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*Driver*</exclude>
-                        <exclude>java*/**</exclude>
-                        <exclude>**/ietf/**</exclude>
-                        <exclude>sun/**</exclude>
-                        <exclude>jdk/**</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.3</version>
-            </plugin>
-        </plugins>
-    </build>
-
-
-    <distributionManagement>
-        <site>
-            <id>website</id>
-            <url>http://chenile.org</url>
-        </site>
-    </distributionManagement>
 
 </project>
