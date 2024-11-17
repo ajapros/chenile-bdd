@@ -1,48 +1,42 @@
 package org.chenile.cucumber.rest;
 
-import static org.chenile.testutils.SpringMvcUtils.assertErrors;
-import static org.chenile.testutils.SpringMvcUtils.assertWarnings;
-import static org.junit.Assert.fail;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import io.restassured.RestAssured;
+import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.response.ResponseOptions;
+import io.restassured.specification.RequestSpecification;
 import org.apache.commons.text.StringSubstitutor;
 import org.chenile.base.response.GenericResponse;
 import org.chenile.base.response.ResponseMessage;
 import org.chenile.cucumber.CukesContext;
-import static org.hamcrest.Matchers.*;
-
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.*;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
-
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.given;
+import static org.chenile.testutils.SpringMvcUtils.assertErrors;
+import static org.chenile.testutils.SpringMvcUtils.assertWarnings;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.fail;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
 /**
@@ -52,18 +46,15 @@ import static org.hamcrest.Matchers.*;
  * See the methods  below for the precise Gherkin language that has been created.
  */
 @ActiveProfiles("unittest")
-@AutoConfigureMockMvc
 public class RestCukesSteps {
-    @Autowired
-    private MockMvc mvc;
 
-    @Value("${pos.host}")
-    private String posHost;
+    @Value("${chenile.bdd.target.host}")
+    private String targetHost;
 
-    @Value("${pos.port}")
-    private Integer posPort;
+    @Value("${chenile.bdd.target.port}")
+    private Integer targetPort;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
     CukesContext context = CukesContext.CONTEXT;
@@ -73,12 +64,12 @@ public class RestCukesSteps {
      * the ID as a variable in the varMap. We can use the ID to retrieve the object back in the next scenario<br/>
      * varMap spans scenarios and hence needs to be stored outside the context.<br/>
      */
-    private static Map<String, String> varMap = new HashMap<String, String>();
+    private static final Map<String, String> varMap = new HashMap<String, String>();
 
     @Before
     public void before() {
-        RestAssured.baseURI = posHost;
-        RestAssured.port = posPort;
+        RestAssured.baseURI = targetHost;
+        RestAssured.port = targetPort;
         context.reset();
     }
     // the request construction using various HTTP Methods
@@ -96,69 +87,52 @@ public class RestCukesSteps {
 
     @When("I POST a REST request to URL {string} with payload")
     public void i_POST_REST_request_with_payload(String url, String docString) throws Exception {
+        invokeHTTPMethod(Method.POST,url,docString);
+    }
 
-
-        Map<String, String> headers = context.get("headers");
-        HttpHeaders httpHeaders = new HttpHeaders();
-
-        if (headers != null) {
-            for (Entry<String, String> entry : headers.entrySet()) {
-                httpHeaders.add(substituteVariables(entry.getKey()),substituteVariables(entry.getValue()));
-            }
-        }
-
-           ResponseOptions responseOptions =
-                   given()
-                           .contentType("application/json")
-                           .body(substituteVariables(docString))
-                           .headers(httpHeaders)
-                           .when()
-                           .log().all()
-                                .post(substituteVariables(url))
-                                .thenReturn();
-
-        context.set("actions", responseOptions);
-
+    @When("I DELETE a REST request to URL {string} with payload")
+    public void i_DELETE_REST_request_with_payload(String url, String docString) throws Exception {
+        invokeHTTPMethod(Method.DELETE,url,docString);
     }
 
     @When("I GET a REST request to URL {string}")
     public void i_GET_a_REST_request_to_URL(String url) throws Exception {
+        invokeHTTPMethod(Method.GET,url,null);
+    }
+
+    @When("I PUT a REST request to URL {string} with payload")
+    public void i_PUT_a_REST_request_to_URL(String url, String docString) throws Exception {
+        invokeHTTPMethod(Method.PUT,url,docString);
+    }
+
+    @When("I PATCH a REST request to URL {string} with payload")
+    public void i_PATCH_a_REST_request_to_URL(String url, String docString) throws Exception {
+        invokeHTTPMethod(Method.PATCH,url,docString);
+    }
+
+    private void invokeHTTPMethod(Method method, String url, String docString) throws Exception {
         Map<String, String> headers = context.get("headers");
         HttpHeaders httpHeaders = new HttpHeaders();
+
         if (headers != null) {
             for (Entry<String, String> entry : headers.entrySet()) {
                 httpHeaders.add(substituteVariables(entry.getKey()),substituteVariables(entry.getValue()));
             }
         }
 
-        Response response =
-                given()
-                        .contentType("application/json")
-                        .headers(httpHeaders)
-                        .when()
-                        .log().all()
-                        .get(substituteVariables(url))
+        RequestSpecification reqSpec = given()
+                .contentType("application/json")
+                .headers(httpHeaders)
+                .when()
+                .log().all();
+
+        if (!method.equals(Method.GET))
+            reqSpec = reqSpec.body(substituteVariables(docString));
+
+        ResponseOptions<?> responseOptions = reqSpec.request(method,substituteVariables(url))
                         .thenReturn();
 
-        context.set("actions", response);
-    }
-
-    @When("I PUT a REST request to URL {string} with payload")
-    public void i_PUT_a_REST_request_to_URL(String url, String docString) throws Exception {
-        Map<String, String> headers = context.get("headers");
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(substituteVariables(url))
-                .content(substituteVariables(docString))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON);
-        if (headers != null) {
-            for (Entry<String, String> entry : headers.entrySet()) {
-                request.header(substituteVariables(entry.getKey()), substituteVariables(entry.getValue()));
-            }
-        }
-        ResultActions actions = mvc.perform(request)
-                .andDo(print());
-        context.set("actions", actions);
+        context.set("actions", responseOptions);
     }
 
     /**
@@ -375,7 +349,7 @@ public class RestCukesSteps {
     }
 
     private String substituteVariables(String s) {
-        if (varMap == null || varMap.isEmpty()) return s;
+        if (varMap.isEmpty()) return s;
         StringSubstitutor sub = new StringSubstitutor(varMap);
         return sub.replace(s);
     }

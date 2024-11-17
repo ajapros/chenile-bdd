@@ -85,6 +85,7 @@ Feature: Tests the price Service using a REST client.
     And store "$.payload.id" from  response to "id"
     And the REST response key "tenant" is "${tenant}"
 
+
   Scenario: Retrieve the saved price with non decimal amount
     Given that "entity" equals "price"
     When I construct a REST request with authorization header in realm "tenant0" for user "t0-premium" and password "t0-premium"
@@ -94,20 +95,6 @@ Feature: Tests the price Service using a REST client.
     And the REST response key "id" is "${id}"
     And the REST response key "variantId" is "Variant01"
     And the REST response key "amount" is "100.0"
-
-  Scenario: Delete the price for a variant (Variant01)
-    Given that "tenant" equals "tenant0"
-    And that "employee" equals "E1"
-    When I construct a REST request with header "x-chenile-tenant-id" and value "${tenant}"
-    And I construct a REST request with header "x-chenile-eid" and value "${employee}"
-    When I construct a REST request with authorization header in realm "tenant0" for user "t0-premium" and password "t0-premium"
-    And I DELETE a REST request to URL "/price/${id}" with payload
-    """
-    {
-    }
-    """
-    Then success is true
-    And the http status code is 200
 
 
   Scenario: Save the price with decimal amount
@@ -139,20 +126,6 @@ Feature: Tests the price Service using a REST client.
     And the REST response key "id" is "${id}"
     And the REST response key "variantId" is "Variant02"
     And the REST response key "amount" is "100.19"
-
-  Scenario: Delete the price for a variant (Variant02)
-    Given that "tenant" equals "tenant0"
-    And that "employee" equals "E1"
-    When I construct a REST request with header "x-chenile-tenant-id" and value "${tenant}"
-    And I construct a REST request with header "x-chenile-eid" and value "${employee}"
-    When I construct a REST request with authorization header in realm "tenant0" for user "t0-premium" and password "t0-premium"
-    And I DELETE a REST request to URL "/price/${id}" with payload
-    """
-    {
-    }
-    """
-    Then success is true
-    And the http status code is 200
 
 
   Scenario: Save the price with long decimal amount
@@ -211,7 +184,7 @@ Feature: Tests the price Service using a REST client.
     And the http status code is 400
     And a REST exception is thrown with message "Price record already exists for variant"
 
-  Scenario: Delete the price for a variant (Variant03)
+  Scenario: Delete the price for a variant
     Given that "tenant" equals "tenant0"
     And that "employee" equals "E1"
     When I construct a REST request with header "x-chenile-tenant-id" and value "${tenant}"
