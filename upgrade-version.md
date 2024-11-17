@@ -4,7 +4,8 @@ Let us say new version is a.b.c. Do the following:
 
 0. Make sure that everything builds good with "make build" 
 1. Edit chenile-bdd-version.txt and pom.xml and replace existing  versions with a.b.c
-2. git add .; git commit -m "Bump up to a.b.c" ; git push origin main
+2. git add .; git commit -m "Bump up to a.b.c" ; git push origin main 
+2a. Alternatively, you can execute _make upgrade-new-version newversion=a.b.c_
 3. make tag tag=a.b.c # this wil create the tag
 4. make build # All the builds in local maven repo will have the latest version now.
 5. passphrase="<secret phrase>" make deploy  # this will deploy to Maven Central
