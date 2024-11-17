@@ -24,6 +24,7 @@
     <properties>
         <revision>0.1.1</revision>
         <chenile.bdd.version>${revision}</chenile.bdd.version>
+        <rest.assured.version>5.5.0</rest.assured.version>
     </properties>
     <licenses>
         <license>
@@ -42,6 +43,17 @@
                 <groupId>org.chenile.bdd</groupId>
                 <artifactId>it-cucumber-sec-utils</artifactId>
                 <version>${chenile.bdd.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>${rest.assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>json-path</artifactId>
+                <version>${rest.assured.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
