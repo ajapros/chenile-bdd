@@ -9,6 +9,9 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import io.cucumber.java.Before;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.chenile.base.exception.ErrorNumException;
 import org.chenile.base.response.GenericResponse;
 import org.chenile.base.response.ResponseMessage;
@@ -23,9 +26,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+
 
 /**
  * Cucumber steps to facilitate running tests using normal IN-VM testing (NOT REST based)<br/>

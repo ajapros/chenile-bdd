@@ -1,12 +1,12 @@
 package org.chenile.cucumber.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+
+import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
@@ -20,11 +20,11 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -112,17 +112,17 @@ public class RestCukesSteps {
 
     private void invokeHTTPMethod(Method method, String url, String docString) throws Exception {
         Map<String, String> headers = context.get("headers");
-        HttpHeaders httpHeaders = new HttpHeaders();
+        Map<String, String> httpHeaders = new HashMap<>();
 
         if (headers != null) {
             for (Entry<String, String> entry : headers.entrySet()) {
-                httpHeaders.add(substituteVariables(entry.getKey()),substituteVariables(entry.getValue()));
+                httpHeaders.put(substituteVariables(entry.getKey()),substituteVariables(entry.getValue()));
             }
         }
 
         RequestSpecification reqSpec = given()
                 .contentType("application/json")
-                .headers(httpHeaders)
+                .headers(headers)
                 .when()
                 .log().all();
 

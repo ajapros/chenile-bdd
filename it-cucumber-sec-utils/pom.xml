@@ -20,6 +20,10 @@
 			<groupId>org.chenile.bdd</groupId>
 			<artifactId>it-cucumber-utils</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-webmvc-test</artifactId>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 </project>
