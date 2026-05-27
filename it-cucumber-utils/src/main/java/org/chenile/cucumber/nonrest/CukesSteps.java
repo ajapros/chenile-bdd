@@ -141,10 +141,10 @@ public class CukesSteps {
 
 	@SuppressWarnings("unchecked")
 	@Then("a warning must be thrown with code {int}")
-	public void a_warning_must_be_thrown_with_code(Integer int1) {		
+	public void a_warning_must_be_thrown_with_code(Object int1) {
 		List<ResponseMessage> warnings = (List<ResponseMessage>)context.get("responseMessages");
 		for (ResponseMessage rm: warnings) {
-			if (rm.getSubErrorCode()== int1)
+			if (rm.getSubErrorCode().equalsIgnoreCase(String.valueOf(int1)))
 				return;
 		}
 		fail("Could not find a warning with error code " + int1);

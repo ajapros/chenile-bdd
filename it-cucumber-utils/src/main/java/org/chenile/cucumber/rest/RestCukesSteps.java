@@ -234,24 +234,24 @@ public class RestCukesSteps {
     }
 
     @Then("a REST warning must be thrown that says {string} with code {int}")
-    public void a_REST_warning_must_be_thrown_that_says_with_code(String warningMessage, Integer errorNum) throws Exception {
+    public void a_REST_warning_must_be_thrown_that_says_with_code(String warningMessage, String errorNum) throws Exception {
         warningMessage = substituteVariables(warningMessage);
         GenericResponse<?> response = extractGenericResponse();
         for (ResponseMessage m : response.getErrors()) {
-            if (m.getSubErrorCode() == errorNum && m.getDescription().equals(warningMessage)) {
+            if (m.getSubErrorCode().equalsIgnoreCase( errorNum) && m.getDescription().equals(warningMessage)) {
                 return;
             }
         }
         fail("Unable to find " + warningMessage + " in warnings");
     }
 
-    @Then("a REST warning must be thrown that says {string} with code {int} and http status {int}")
+    @Then("a REST warning must be thrown that says {string} with code {String} and http status {int}")
     public void a_REST_warning_must_be_thrown_that_says_with_code_and_http_status
-            (String warningMessage, Integer subErrorCode, Integer httpStatus) throws Exception {
+            (String warningMessage, String subErrorCode, Integer httpStatus) throws Exception {
         warningMessage = substituteVariables(warningMessage);
         GenericResponse<?> response = extractGenericResponse();
         for (ResponseMessage m : response.getErrors()) {
-            if (m.getSubErrorCode() == subErrorCode &&
+            if (m.getSubErrorCode().equalsIgnoreCase(subErrorCode) &&
                     m.getDescription().equals(warningMessage) &&
                     m.getCode() == httpStatus) {
                 return;
@@ -260,12 +260,12 @@ public class RestCukesSteps {
         fail("Unable to find " + warningMessage + " in warnings");
     }
 
-    @Then("a REST warning must be thrown with code {int}")
-    public void a_REST_warning_must_be_thrown_with_code(Integer errorNum) throws Exception {
+    @Then("a REST warning must be thrown with code {String}")
+    public void a_REST_warning_must_be_thrown_with_code(String errorNum) throws Exception {
         GenericResponse<?> response = extractGenericResponse();
         for (ResponseMessage m : response.getErrors()) {
-            int code = m.getSubErrorCode();
-            if (code == errorNum)
+            String code = m.getSubErrorCode();
+            if (code.equalsIgnoreCase(errorNum))
                 return;
         }
         fail("Unable to find " + errorNum + " in warnings");

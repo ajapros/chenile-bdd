@@ -35,6 +35,25 @@ public class SpringMvcUtils {
         	.andExpect(jsonPath("$.errors[0].description").value(exceptionMessage));
         }
 	}
+
+	public static void assertWarnings(ResultActions actions, String errorNum,
+									  String warningMessage) throws Exception {
+		actions
+				.andExpect(header().exists(HttpHeaders.WARNING))
+
+				.andExpect(jsonPath("$.success").value(true))
+				.andExpect(jsonPath("$.severity").value(ErrorType.WARN.toString()))
+				.andExpect(jsonPath("$.subErrorCode").value(errorNum))
+				.andExpect(jsonPath("$.errors").isArray())
+				.andExpect(jsonPath("$.errors[0].severity").value(ErrorType.WARN.toString()))
+				.andExpect(jsonPath("$.errors[0].subErrorCode").value(errorNum));
+		if(warningMessage != null) {
+			actions
+					.andExpect(jsonPath("$.errors[0].description").value(warningMessage))
+					.andExpect(header().string(HttpHeaders.WARNING,warningMessage))
+					.andExpect(jsonPath("$.description").value(warningMessage));
+		}
+	}
 	
 	public static void assertWarnings(ResultActions actions, int errorNum,
 			String warningMessage) throws Exception {
