@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
  *
  */
 public class SpringMvcUtils {
-	public static void assertErrors(ResultActions actions, int errorNum,int subErrorNum,
+	public static void assertErrors(ResultActions actions, int errorNum,String subErrorNum,
 			String exceptionMessage) throws Exception {
 		actions
 		.andExpect(status().is(errorNum))
@@ -23,7 +23,7 @@ public class SpringMvcUtils {
         .andExpect(jsonPath("$.severity").value(ErrorType.ERROR.toString()))
         
         .andExpect(jsonPath("$.data").doesNotExist());
-        if (subErrorNum != 0) {
+        if (subErrorNum.equals("0")) {
         	actions.andExpect(jsonPath("$.subErrorCode").value(subErrorNum))
         	.andExpect(jsonPath("$.errors[0].subErrorCode").value(subErrorNum));
         }

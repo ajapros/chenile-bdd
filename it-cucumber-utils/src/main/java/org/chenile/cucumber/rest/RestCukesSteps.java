@@ -300,13 +300,13 @@ public class RestCukesSteps {
     // Exception processing
     @Then("a REST exception is thrown with status {int} and message code {int}")
     public void a_REST_exception_is_thrown_with_status_and_message_code
-    (Integer errCode, Integer subErrCode) throws Exception {
+    (Integer errCode, String subErrCode) throws Exception {
         ResultActions actions = (ResultActions) context.get("actions");
         assertErrors(actions, errCode, subErrCode, null);
     }
 
     @Then("a REST exception is thrown with message code {int}")
-    public void a_REST_exception_is_thrown_with_message_code(Integer errorCode) throws Exception {
+    public void a_REST_exception_is_thrown_with_message_code(String errorCode) throws Exception {
         ResultActions actions = (ResultActions) context.get("actions");
         assertErrors(actions, 400, errorCode, null);
     }
